@@ -1,0 +1,8 @@
+flutter_native_splash:
+  color: "#0DCDAA"
+  image: assets/event_text.png
+  color_dark: "#042a49"
+  image_dark: assets/event_text.png
+  android_12:
+    image: assets/event_text.png
+    color: "#0DCDAA"
