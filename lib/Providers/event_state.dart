@@ -6,6 +6,7 @@ import 'package:new_first_demo/Models/event.dart';
 abstract class EventState extends Equatable {
   get eventList => [];
   get loading => false;
+  get location => '';
 }
 
 class EventLoadingState extends EventState {
@@ -18,9 +19,11 @@ class EventLoadingState extends EventState {
 
 class EventLoadedState extends EventState {
   @override
+  final String? location;
+  @override
   final List<Object> eventList;
 
-  EventLoadedState(this.eventList);
+  EventLoadedState(this.eventList, this.location);
 
   @override
   List<Object?> get props => eventList;

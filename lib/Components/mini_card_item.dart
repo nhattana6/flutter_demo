@@ -31,11 +31,16 @@ class _MiniCardItemState extends State<MiniCardItem> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
-                    child: Image(
+                    child: widget.event.image.contains('assets') ? Image(
                       fit: BoxFit.cover,
                       width: 88,
                       height: 88,
                       image: AssetImage(widget.event.image),
+                    ) : Image(
+                      fit: BoxFit.cover,
+                      width: 88,
+                      height: 88,
+                      image: NetworkImage(widget.event.image),
                     ),
                   ),
                   Expanded(

@@ -160,6 +160,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
         ),
+        const SizedBox(height: 2),
         Container(
           color: const Color(0xFFFBFBFB),
           child: const Padding(
@@ -173,6 +174,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
         ),
+        const SizedBox(height: 2),
         Container(
           color: const Color(0xFFFBFBFB),
           child: const Padding(
@@ -186,6 +188,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
         ),
+        const SizedBox(height: 2),
         Container(
           color: const Color(0xFFFBFBFB),
           child: const Padding(
