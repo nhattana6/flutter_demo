@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:new_first_demo/Components/mini_card_item.dart';
 import 'package:new_first_demo/Models/event.dart';
+import 'package:new_first_demo/utils/preferences.dart' as preferences;
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
@@ -12,8 +13,15 @@ class FavoritePage extends StatefulWidget {
 class _FavoritePageState extends State<FavoritePage> {
   var emptyPage = false;
 
+
+  void onRemoveList() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    var favoriteList = preferences.favoriteList;
+    var countItem = favoriteList != null ? favoriteList?.length : 0;
     if (!emptyPage) {
       return Padding(
             padding: const EdgeInsets.only(left: 15, right: 15),
@@ -33,9 +41,9 @@ class _FavoritePageState extends State<FavoritePage> {
                         color: Color(0xFF0DCDAA),
                         shape: BoxShape.circle,
                       ),
-                      child: const Text(
-                        '2',
-                        style: TextStyle(
+                      child: Text(
+                        countItem.toString(),
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.w700),
@@ -48,17 +56,11 @@ class _FavoritePageState extends State<FavoritePage> {
                     physics: const BouncingScrollPhysics(),
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
-                    itemCount: 2,
+                    itemCount: countItem,
                     itemBuilder: (BuildContext context, int index) {
-                      return MiniCardItem(
-                          event: Event(
-                              index,
-                              'The Kooks',
-                              'Thu, Apr 19 · 20.00 Pm',
-                              'Razzmatazz',
-                              100,
-                              'assets/card_image.png',
-                              true));
+                      var item = favoriteList?[index];
+                      return MiniCardItem(event: Event(item!.id, item.name, item.time, item.location, item.price, item.image, true),
+                          onRemoveList: onRemoveList);
                     },
                   ),
                 ),

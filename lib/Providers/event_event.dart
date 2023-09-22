@@ -9,5 +9,6 @@ abstract class EventEvent extends Equatable {
 
 class LoadEventEvent extends EventEvent {
   @override
-  List<Event> get props => [];
+  // TODO: implement props
+  List<Object?> get props => throw UnimplementedError();
 }

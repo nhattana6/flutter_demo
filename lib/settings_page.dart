@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:new_first_demo/utils/preferences.dart' as preferences;
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -11,7 +12,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool _value = true;
   bool _isShowNameInput = false;
-  final nameInputController = TextEditingController(text: 'Fede Lanzi');
+  final nameInputController = TextEditingController(text: preferences.username ?? '');
   late FocusNode myFocusNode;
 
   @override
@@ -49,6 +50,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void onSubmitChangeName()
   {
+    preferences.username = nameInputController.text;
     setState(() {
       _isShowNameInput = false;
     });

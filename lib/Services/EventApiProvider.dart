@@ -16,4 +16,35 @@ class ApiProvider {
       throw Exception("Exception occured: $error stackTrace: $stacktrace");
     }
   }
+
+  Future<Event> fetchEventDetails(int id) async {
+    try {
+      Response response = await _dio.get('/events/$id');
+      var data = response.data;
+      var eventDetails = Event.fromJson(data as Map<String, dynamic>);
+      return eventDetails;
+    } catch (error, stacktrace) {
+      throw Exception("Exception occured: $error stackTrace: $stacktrace");
+    }
+  }
+
+  Future<Event> createNewEvent(Event eventItem) async {
+    try {
+      Response response = await _dio.post('/events', data: eventItem.toJson());
+      var data = response.data;
+      var eventDetails = Event(data['id'], eventItem.name, eventItem.time, eventItem.location, eventItem.price, eventItem.image, false);
+      return eventDetails;
+    } catch (error, stacktrace) {
+      throw Exception("Exception occured: $error stackTrace: $stacktrace");
+    }
+  }
+
+  Future<Event> deleteEvent(int id) async {
+    try {
+      Response _ = await _dio.delete('/events/$id');
+      return Event(0,'','','',0,'',false);
+    } catch (error, stacktrace) {
+      throw Exception("Exception occured: $error stackTrace: $stacktrace");
+    }
+  }
 }

@@ -30,6 +30,7 @@ class Event {
         isLike = false;
 
   Map<String, dynamic> toJson() => {
+    'id' : id,
     'name': name,
     'time': time,
     'location': location,

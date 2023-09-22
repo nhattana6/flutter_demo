@@ -10,14 +10,22 @@ import 'package:new_first_demo/Providers/event_provider.dart';
 import 'package:new_first_demo/Providers/event_state.dart';
 import 'package:new_first_demo/add_event.dart';
 import 'package:new_first_demo/router.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:new_first_demo/utils/preferences.dart' as preferences;
 
-class HomePage extends StatelessWidget {
+import 'Providers/event_event.dart';
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
   Widget build(BuildContext context) {
+    // preferences.storage.remove('favoriteList');
     // TODO: implement build
     final ButtonStyle style =
     ElevatedButton.styleFrom(
@@ -26,11 +34,38 @@ class HomePage extends StatelessWidget {
       shape: const StadiumBorder(),
     );
 
-    Future<void> onClickItem(int id){
+    Future<void> onClickItem(int id, BuildContext context){
       return AppRouter.gotoEventDetailsScreen(
         context,
         eventId: id,
-      );
+      ).then((value) => context.read<EventBloc>().add(LoadEventEvent()));
+    }
+
+    void onCallback() {
+    }
+
+    void onLikeItem(Event item) {
+      item.isLike = !item.isLike;
+      List<Event>? newFavoriteList = [];
+      if (preferences.favoriteList != null) {
+        newFavoriteList = preferences.favoriteList;
+      }
+      var eventItem = newFavoriteList
+          ?.singleWhere((element) => element.id == item.id, orElse: () {
+        return Event(0, '', '', '', 0, '', false);
+      });
+      if (item.isLike) {
+        if (eventItem?.id == 0) {
+          newFavoriteList?.add(item);
+        }
+      } else {
+        if (eventItem?.id != 0) {
+          newFavoriteList?.remove(eventItem);
+        }
+      }
+
+      preferences.favoriteList = newFavoriteList;
+      setState(() {});
     }
 
     return EventProvider(
@@ -50,12 +85,12 @@ class HomePage extends StatelessWidget {
                         highlightColor: Colors.grey.shade100,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 70,
-                              height: 15,
-                              color: Colors.white,
-                            ),
+                          children: [Container(
+                            width: 70,
+                            height: 15,
+                            color: Colors.white,
+                          ),
+
                             const SizedBox(height: 7),
                             Container(
                               width: 100,
@@ -107,6 +142,30 @@ class HomePage extends StatelessWidget {
             var firstItem = eventList.first;
             var eventDate = DateTime.parse(firstItem.time);
             String formattedDate = DateFormat('EEE, MMM dd · hh.mm a').format(eventDate);
+            var isLike = false;
+
+            if (preferences.favoriteList != null) {
+              var newFavoriteList = preferences.favoriteList;
+              var eventItem = newFavoriteList
+                  ?.singleWhere((element) => element.id == firstItem.id, orElse: () {
+                return Event(0, '', '', '', 0, '', false);
+              });
+              if (eventItem?.id != 0) {
+                isLike = true;
+              }
+            }
+
+            var isNew = true;
+            if(preferences.oldEventList != null) {
+              var oldEventList = preferences.oldEventList;
+              var eventItem = oldEventList
+                  ?.singleWhere((element) => element.id == firstItem.id, orElse: () {
+                return Event(0, '', '', '', 0, '', false);
+              });
+              if (eventItem?.id != 0) {
+                isNew = false;
+              }
+            }
 
             // get next 3 items
             var nextItems = eventList.skip(1).take(3).toList();
@@ -141,7 +200,7 @@ class HomePage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const AddEvent()),
-                          );
+                          ).then((value) => context.read<EventBloc>().add(LoadEventEvent()));
                         },
                         style: style,
                         child: const Text('New Event', style: TextStyle(color: Colors.white),),
@@ -155,7 +214,7 @@ class HomePage extends StatelessWidget {
                   Stack(
                       children: <Widget>[
                         InkWell(
-                          onTap: () => onClickItem(1),
+                          onTap: () => onClickItem(1, context),
                           child: Container(
                             decoration: const BoxDecoration(
                               color: Color(0xFFF2F2F2),
@@ -204,7 +263,13 @@ class HomePage extends StatelessWidget {
                                           mainAxisAlignment: MainAxisAlignment.end,
                                           children: [
                                             IconButton(
-                                                icon: const Icon(Icons.favorite_border), color: const Color(0xFF7C7C7C), onPressed: (){}
+                                                icon: isLike
+                                                    ? const Icon(Icons.favorite)
+                                                    : const Icon(Icons.favorite_border),
+                                                color: isLike
+                                                    ? const Color(0xFFF01717)
+                                                    : const Color(0xFF7C7C7C),
+                                                onPressed: () => onLikeItem(firstItem)
                                             ),
                                             IconButton(
                                                 icon: const Icon(Icons.share), color: const Color(0xFF7C7C7C), onPressed: (){}
@@ -219,6 +284,7 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                         ),
+                        if(isNew)
                         Positioned(
                             top: 10,
                             right: 10,
@@ -245,9 +311,8 @@ class HomePage extends StatelessWidget {
                     itemCount: nextItems.length,
                     itemBuilder: (BuildContext context, int index) {
                       var item = nextItems[index];
-                      var itemDate = DateTime.parse(item.time);
-                      var dateFormat = DateFormat('EEE, MMM dd · hh.mm a').format(itemDate);
-                      return MiniCardItem(event: Event(item.id, item.name, dateFormat, item.location, item.price, item.image, false));
+                      return MiniCardItem(event: Event(item.id, item.name, item.time, item.location, item.price, item.image, false),
+                        onRemoveList: onCallback,);
                     },
                   ),
                 ],

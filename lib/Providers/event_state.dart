@@ -21,12 +21,12 @@ class EventLoadedState extends EventState {
   @override
   final String? location;
   @override
-  final List<Object> eventList;
+  final List<Event?> eventList;
 
   EventLoadedState(this.eventList, this.location);
 
   @override
-  List<Object?> get props => eventList;
+  List<Object?> get props => [eventList];
 }
 
 class EventErrorState extends EventState {
