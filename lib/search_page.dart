@@ -19,13 +19,17 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   List<Event> allItems = [];
   List<Event> searchItems = [];
+
   void onSearchEvent(String text) {
-    if(text.isEmpty) {
+    if (text.isEmpty) {
       setState(() {
         searchItems = allItems;
       });
-    } else{
-      var items = allItems.where((element) => equalsIgnoreAsciiCase(element.name, text)).toList();
+    } else {
+      var items = allItems
+          .where((element) =>
+              element.name.contains(RegExp(text, caseSensitive: false)))
+          .toList();
       setState(() {
         searchItems = items;
       });
@@ -99,7 +103,7 @@ class _SearchPageState extends State<SearchPage> {
           );
         }
         var eventList = List<Event>.from(state.eventList);
-        if(allItems.isEmpty) {
+        if (allItems.isEmpty) {
           searchItems = eventList;
         }
         allItems = eventList;
@@ -149,7 +153,10 @@ class _SearchPageState extends State<SearchPage> {
                     ],
                   ),
                 ),
-                Expanded(
+                searchItems.isEmpty ? const Image(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/no_search_data.jpg'),
+                ) : Expanded(
                   child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     scrollDirection: Axis.vertical,
@@ -169,7 +176,12 @@ class _SearchPageState extends State<SearchPage> {
             ),
           );
         } else {
-          return const Center(child: Text('No data'));
+          return const Center(
+            child: Image(
+              fit: BoxFit.cover,
+              image: AssetImage('assets/no_data.jpg'),
+            ),
+          );
         }
       }),
     );

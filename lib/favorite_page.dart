@@ -11,8 +11,6 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
-  var emptyPage = false;
-
 
   void onRemoveList() {
     setState(() {});
@@ -22,7 +20,7 @@ class _FavoritePageState extends State<FavoritePage> {
   Widget build(BuildContext context) {
     var favoriteList = preferences.favoriteList;
     var countItem = favoriteList != null ? favoriteList?.length : 0;
-    if (!emptyPage) {
+    if (favoriteList!.isNotEmpty) {
       return Padding(
             padding: const EdgeInsets.only(left: 15, right: 15),
             child: Column(
